@@ -10,7 +10,7 @@ def dynamic_bid_policy(state, viewer_type):
     return bid, campaign
 
 def heuristic_policy(params):
-    """启发式策略工厂函数"""
+    """启发式策略函数"""
     fixed_bid = np.mean([np.mean(campaign_r) * 0.6 for campaign_r in params['r']])
     alloc_count = np.zeros(params['num_viewer_types'], dtype=int)
     
@@ -22,12 +22,12 @@ def heuristic_policy(params):
     return policy
 
 def fixed_bid_policy(params):
-    """固定投标策略工厂函数"""
+    """固定投标策略函数"""
     avg_revenue = np.mean([r for campaign in params['r'] for r in campaign])
     optimal_bid = avg_revenue * 0.6
     return lambda s, j: (optimal_bid, 0)
 
 def linear_bid_policy(params):
-    """线性投标策略工厂函数"""
+    """线性投标策略函数"""
     optimal_slope = 0.05
     return lambda s, j: (optimal_slope * np.sum(s), 0)
