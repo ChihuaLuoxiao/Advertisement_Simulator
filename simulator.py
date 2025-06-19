@@ -152,5 +152,7 @@ class AdvertisingSimulator:
                         self.state[i, j] += accepted
             
             total_profit += profit
-        
-        return total_profit / num_runs
+        if total_profit / num_runs > 0:
+            return total_profit / num_runs
+        else:
+            return 0

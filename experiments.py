@@ -1,6 +1,6 @@
 from simulator import AdvertisingSimulator
-from policies import heuristic_policy, fixed_bid_policy, linear_bid_policy
-from visualization import plot_policy_comparison, plot_sensitivity_analysis, plot_bid_curve
+from policies import heuristic_policy, fixed_bid_policy
+from visualization import plot_policy_comparison,  plot_bid_curve
 import numpy as np
 
 def run_experiments(params=None):
@@ -10,15 +10,15 @@ def run_experiments(params=None):
     print("="*50)
     
     simulator = AdvertisingSimulator(params or {
-        'num_campaigns': 1,
+        'num_campaigns': 3,
         'num_viewer_types': 1,
         'T': 8 * 3600,
         'mu': [2.5],
-        'lambda': [0.1],
-        's': [[1]],
-        'A': [[50]],
-        'r': [[2.5]],
-        'c': [[0.4]],
+        'lambda': [0.1, 0.2, 0.3],
+        's': [[1], [1], [1]],
+        'A': [[50], [50], [50]],
+        'r': [[2.5], [3.0], [3.5]],
+        'c': [[0.4], [0.4], [0.3]],
         'k': [1],
         'seed': 123
     })
@@ -56,8 +56,7 @@ def run_experiments(params=None):
     policies = {
         "动态策略": simulator.simulate_dynamic_policy,
         "启发式策略": lambda e: simulator.evaluate_policy(heuristic_policy(simulator.params), e),
-        "固定投标策略": lambda e: simulator.evaluate_policy(fixed_bid_policy(simulator.params), e),
-        "线性投标策略": lambda e: simulator.evaluate_policy(linear_bid_policy(simulator.params), e)
+        "固定投标策略": lambda e: simulator.evaluate_policy(fixed_bid_policy(simulator.params), e)
     }
     
     results = {name: policy_fn(events) for name, policy_fn in policies.items()}
@@ -65,23 +64,7 @@ def run_experiments(params=None):
         print(f"{name}利润: ${profit:.2f}")
     
     plot_policy_comparison(results)
-    
-    # 实验3: 延迟成本敏感性分析
-    print("\n" + "="*50)
-    print("实验3: 延迟成本敏感性分析")
-    print("="*50)
-    c_multipliers = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-    c_results = []
-    
-    for value in c_multipliers:
-        test_params = simulator.params.copy()
-        test_params['c'] = [[c * value for c in campaign] for campaign in simulator.params['c']]
-        test_simulator = AdvertisingSimulator(test_params)
-        test_profit = test_simulator.simulate_dynamic_policy(events.copy())
-        c_results.append(test_profit)
-        print(f"c_multiplier={value}: 利润 = ${test_profit:.2f}")
-    
-    plot_sensitivity_analysis('c_multiplier', c_multipliers, c_results)
+
     print("\n所有实验完成! 结果图表已保存至当前目录")
 
 if __name__ == "__main__":

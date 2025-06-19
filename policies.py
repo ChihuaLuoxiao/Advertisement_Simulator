@@ -26,8 +26,3 @@ def fixed_bid_policy(params):
     avg_revenue = np.mean([r for campaign in params['r'] for r in campaign])
     optimal_bid = avg_revenue * 0.6
     return lambda s, j: (optimal_bid, 0)
-
-def linear_bid_policy(params):
-    """线性投标策略函数"""
-    optimal_slope = 0.05
-    return lambda s, j: (optimal_slope * np.sum(s), 0)
